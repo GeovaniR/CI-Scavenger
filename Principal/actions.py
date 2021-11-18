@@ -6,23 +6,24 @@ import requests
 from datetime import datetime, timedelta
 import statistics
 
-## Salva a lista de pipelines do repo e transformar em formato .json para análise, também recupera o número de pipelines do repo
-username = input("Username:")
-token = input("Token:")
-owner = input("Repository Owner:")
-repo = input("Repository Name:")
-repo_path = owner + "/" + repo
-pi_url = "https://api.github.com/repos/"
-full_repo_path = pi_url + repo_path
-request_path = full_repo_path + "/actions/workflows"
-res_workflows = requests.get(request_path, auth= (username, token))
-json_w = res_workflows.json()
-n_pipelines = json_w["total_count"]
-workflows = json_w["workflows"]
-print("----------------------------------------------------------------------")
-print("Número de worflows:",n_pipelines)
+def define_path(username, token, owner, repo): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json
+    repo_path = owner + "/" + repo
+    pi_url = "https://api.github.com/repos/"
+    full_repo_path = pi_url + repo_path
+    request_path = full_repo_path + "/actions/workflows"
+    res_workflows = requests.get(request_path, auth= (username, token))
+    json_w = res_workflows.json()
+    n_pipelines = json_w["total_count"]
+    workflows = json_w["workflows"]
+    print("----------------------------------------------------------------------")
+    print("Número de worflows:",n_pipelines)
+    return(full_repo_path, request_path, workflows, n_pipelines)
 
-### Funções
+def workflow_name_state(i):
+    print("---------------------------------------------------------------------")
+    print("Workflow Name:",workflows[i].get("name")) # Recupera o nome do Pipeline
+    print("Estado do Workflow:", workflows[i].get("state")) # Recupera se o Pipeline está ativo
+
 ## Recupera quando o pipeline foi criado e a ultima vez que foi atualizado, além de calcular a diferença entre essas datas *calculate_development_time*
 def calculate_development_time(i):
     t1 = workflows[i].get("created_at")
@@ -36,7 +37,7 @@ def calculate_development_time(i):
 
 # Recupera informações sobre o tempo que levou para ser executado uma das últimas runs do pipeline e adiciona numa lista
 def calculate_runs_time(t, runs, l_t, r):
-    if (runs[t].get("conclusion") == "success"):
+    if (runs[t].get("conclusion") == "success"): # Verifica se a run foi sucesso
         t1 = runs[t].get("created_at")
         t2 = runs[t].get("updated_at")
         t1_date = datetime(year = int(t1[0:4]), month = int(t1[5:7]), day = int(t1[8:10]), hour = int(t1[11:13]), minute = int(t1[14:16]), second = int(t1[17:19]))
@@ -112,15 +113,19 @@ def calculate_runs(i,n): # n define quantos runs serão pegas
             a = count_branch_ativation(i, runs, a)
             count_jobs_runs(i, runs, l_jobs)
         while(r < n):
-            l_t, t, r = calculate_runs_time(t, runs, l_t, r)
-    print(l_t)    
+            l_t, t, r = calculate_runs_time(t, runs, l_t, r)   
     perc_suc, perc_main, perc_outros = calculate_perc(j,n, block, a)
     return(print_information(perc_suc, perc_main, perc_outros, l_t, l_jobs, n_runs))
     
+## Salva a lista de pipelines do repo e transformar em formato .json para análise, também recupera o número de pipelines do repo
+username = input("Username:") # Entrada Username git hub
+token = input("Token:") # Entrada do token de validação
+owner = input("Repository Owner:") # Entrada do nome do Dono do repo
+repo = input("Repository Name:") # Entrada do nome do repo
+full_repo_path, request_path, workflows, n_pipelines = define_path(username, token, owner, repo)
 ## Loop para que seja rodada as funções em cada pipeline
 for i in range(0,n_pipelines):
-    print("---------------------------------------------------------------------")
-    print("Workflow Name:",workflows[i].get("name")) # Recupera o nome do Pipeline
-    print("Estado do Workflow:", workflows[i].get("state")) # Recupera se o Pipeline está ativo
+    workflow_name_state(i)
     calculate_development_time(i)
     calculate_runs(i, 20)
+
