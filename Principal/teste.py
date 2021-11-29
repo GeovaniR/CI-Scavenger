@@ -5,6 +5,7 @@
 import requests
 from datetime import datetime, timedelta
 import statistics
+import json
 
 def main():
     username = input("Username:") # Entrada Username git hub
@@ -12,11 +13,34 @@ def main():
     owner = input("Repository Owner:") # Entrada do nome do Dono do repo
     repo = input("Repository Name:") # Entrada do nome do repo
     n = int(input("Número de runs para ánalise:"))
-    full_repo_path, request_path, workflows, n_pipelines = define_path(username, token, owner, repo) 
+    repo_path, full_repo_path, request_path, workflows, n_pipelines = define_path(username, token, owner, repo)
+    json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
     for i in range(0, n_pipelines): ## Loop para que seja rodada as funções em cada pipeline
-        workflow_name_state(i, workflows)
-        calculate_development_time(i, workflows)
-        calculate_runs(i, n, workflows, username, token, request_path, full_repo_path)
+        workflow_name, workflow_state = workflow_name_state(i, workflows)
+        temp_start, temp_close, diff_temp = calculate_development_time(i, workflows)
+        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs = calculate_runs(i, n, workflows, username, token, request_path, full_repo_path)
+        workflow_json = json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs)
+        json_data[repo_path].append(workflow_json)
+    print(json_data)   
+        
+
+def json_create(n_pipelines, repo_path):
+    json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
+    return(json_data)
+
+def json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs):
+    meean_time = str(timedelta(seconds= int(statistics.mean(runs_time_list))))
+    dev_time = str(timedelta(seconds= int(statistics.stdev(runs_time_list))))
+    mean_jobs = str(statistics.mean(n_jobs_list))
+    perc_sucess = "{0} %".format(round(perc_sucess, 2))
+    perc_branch_main = "{0} %".format(round(perc_branch_main, 2))
+    perc_branch_outros = "{0} %".format(round(perc_branch_outros, 2))
+    workflow_json = {
+            "Workflow_Name":workflow_name, "State":workflow_state, "Created_at": temp_start, "Updated_at" :temp_close,
+            "Develop_time":diff_temp, "success_rate":perc_sucess, "Branch_Main_runs_rate":perc_branch_main, "Other_Branchs_runs_rate":perc_branch_outros,
+            "Mean(Execution time)":meean_time, "standard_deviation(Execution time)": dev_time, "Jobs_mean":mean_jobs, "total_runs": n_runs
+        }
+    return(workflow_json)
 
 def define_path(username, token, owner, repo): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json
     repo_path = owner + "/" + repo
@@ -29,12 +53,15 @@ def define_path(username, token, owner, repo): ## Define os caminhos, cálcula o
     workflows = workflows_json["workflows"]
     print("----------------------------------------------------------------------")
     print("Número de worflows:", n_pipelines)
-    return(full_repo_path, request_path, workflows, n_pipelines)
+    return(repo_path, full_repo_path, request_path, workflows, n_pipelines)
 
 def workflow_name_state(i, workflows):
     print("---------------------------------------------------------------------")
-    print("Workflow Name:",workflows[i].get("name")) # Recupera o nome do Pipeline
-    print("Estado do Workflow:", workflows[i].get("state")) # Recupera se o Pipeline está ativo
+    workflow_name = workflows[i].get("name")
+    workflow_state = workflows[i].get("state")
+    print("Workflow Name:",workflow_name) # Recupera o nome do Pipeline
+    print("Estado do Workflow:", workflow_state) # Recupera se o Pipeline está ativo
+    return(workflow_name, workflow_state)
 
 ## Recupera quando o pipeline foi criado e a ultima vez que foi atualizado, além de calcular a diferença entre essas datas *calculate_development_time*
 def calculate_development_time(i, workflows):
@@ -45,7 +72,8 @@ def calculate_development_time(i, workflows):
     temp_start_date = datetime(year = int(temp_start[0:4]), month = int(temp_start[5:7]), day = int(temp_start[8:10]), hour = int(temp_start[11:13]), minute = int(temp_start[14:16]), second = int(temp_start[17:19]))
     temp_close_date = datetime(year = int(temp_close[0:4]), month = int(temp_close[5:7]), day = int(temp_close[8:10]), hour = int(temp_close[11:13]), minute = int(temp_close[14:16]), second = int(temp_close[17:19]))
     diff_temp = temp_close_date - temp_start_date
-    return (print("Tempo de Desenvolvimento do Workflow:", diff_temp))
+    print("Tempo de Desenvolvimento do Workflow:", diff_temp)
+    return (temp_start, temp_close, str(diff_temp))
 
 # Recupera informações sobre o tempo que levou para ser executado uma das últimas runs do pipeline e adiciona numa lista
 def calculate_runs_time(runs_sucess, i, runs_time_list):
@@ -141,8 +169,9 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             for i in range(0, n):
                 runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
             runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
-        perc_sucess, perc_branch_main, perc_branch_outros = calculate_perc(sucess, n, failed, branch_main_ativation)    
-    return(print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs))
+        perc_sucess, perc_branch_main, perc_branch_outros = calculate_perc(sucess, n, failed, branch_main_ativation)
+        print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs)
+    return(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs)
     
 if __name__ == "__main__":
     main()

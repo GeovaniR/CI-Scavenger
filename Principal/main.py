@@ -1,3 +1,3 @@
 ## Importando bibliotecas
-import actions
-actions.__name__
+from actions import main
+main()
