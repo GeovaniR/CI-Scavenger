@@ -21,12 +21,9 @@ def main():
         perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs = calculate_runs(i, n, workflows, username, token, request_path, full_repo_path)
         workflow_json = json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs)
         json_data[repo_path].append(workflow_json)
+    json_data = json.dumps(json_data)
     print(json_data)   
-        
 
-def json_create(n_pipelines, repo_path):
-    json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
-    return(json_data)
 
 def json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs):
     meean_time = str(timedelta(seconds= int(statistics.mean(runs_time_list))))
