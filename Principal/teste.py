@@ -22,8 +22,9 @@ def main():
         perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs = calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose)
         workflow_json = json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs)
         json_data[repo_path].append(workflow_json)
-    json_data = json.dumps(json_data)
-    print(json_data)   
+    with open('DataJson.json', 'w', encoding='utf-8') as outfile:
+        json.dump(json_data, outfile, ensure_ascii=False, indent=2)
+    my_print(json_data, verbose)   
 
 def my_print(string_param, verbose):
     if(verbose):
@@ -39,9 +40,9 @@ def json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_t
     perc_branch_outros = "{0} %".format(round(perc_branch_outros, 2))
     workflow_json = {
             "Workflow_Name":workflow_name, "State":workflow_state, "Created_at": temp_start, "Updated_at" :temp_close,
-            "Dev_time":diff_temp, "success_rate":perc_sucess, "Branch_Main_rate":perc_branch_main, "Other_Branchs_rate":perc_branch_outros,
-            "Mean(Execution time)":meean_time, "Std_deviation(Execution time)": dev_time, "Jobs_mean":mean_jobs, "total_runs": n_runs
-        }
+            "Dev_time":diff_temp, "Success_rate":perc_sucess, "Branch_Main_rate":perc_branch_main, "Other_Branchs_rate":perc_branch_outros,
+            "Mean(Execution time)":meean_time, "Std_deviation(Execution time)": dev_time, "Jobs_mean":mean_jobs, "Total_runs": n_runs
+        }    
     return(workflow_json)
 
 def define_path(username, token, owner, repo, verbose): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json
