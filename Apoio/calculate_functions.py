@@ -8,25 +8,28 @@ def my_print(string_param, verbose):
         print(string_param)
     return()
 
-def print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose):
-    my_print("Porcentagem de sucesso: {:.2f}%".format(perc_sucess), verbose)       
+def print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose, n_runs_analyses, runs_time_dict):
+    my_print("Porcentagem de sucesso: {:.2f} %".format(perc_sucess), verbose)       
     my_print("Porcentagem de Execuções relacionadas a Branch Main {:.2f} %  /  Porcentagem ligada a Ramificações {:.2f} %".format(perc_branch_main, perc_branch_outros), verbose)
     my_print("Média (Tempo de Execução): {0}  /  Desvio Padrão (Tempo de Execução): {1}".format(timedelta(seconds= int(statistics.mean(runs_time_list))), timedelta(seconds= int(statistics.stdev(runs_time_list)))), verbose)
-    my_print("Média de jobs no Pipeline:{0}".format(statistics.mean(n_jobs_list)), verbose)
-    my_print("Número de runs:{0}".format(n_runs), verbose)
+    my_print("Média de jobs no Pipeline: {0}".format(statistics.mean(n_jobs_list)), verbose)
+    my_print("Número de runs: {0}".format(n_runs), verbose)
+    my_print("Número de runs analisadas: {0}".format(n_runs_analyses), verbose)
+    for chave, valor in runs_time_dict.items():
+        my_print("Porcentagem de execuções em {0}: {1}".format(chave, valor), verbose)
     return()
 
 ## Recupera quando o pipeline foi criado e a ultima vez que foi atualizado, além de calcular a diferença entre essas datas *calculate_development_time*
 def calculate_development_time(i, workflows, verbose):
     temp_start = workflows[i].get("created_at") # Recupera quando o workflow foi criado
     temp_close = workflows[i].get("updated_at") # Recupera quando foi a última atualização do workflow
-    my_print("Data de Criação:{0}".format(temp_start), verbose)
-    my_print("Última atualização:{0}".format(temp_close), verbose)
+    my_print("Data de Criação: {0}".format(temp_start), verbose)
+    my_print("Última atualização: {0}".format(temp_close), verbose)
     temp_start_date = datetime(year = int(temp_start[0:4]), month = int(temp_start[5:7]), day = int(temp_start[8:10]), hour = int(temp_start[11:13]), minute = int(temp_start[14:16]), second = int(temp_start[17:19]))
     temp_close_date = datetime(year = int(temp_close[0:4]), month = int(temp_close[5:7]), day = int(temp_close[8:10]), hour = int(temp_close[11:13]), minute = int(temp_close[14:16]), second = int(temp_close[17:19]))
     diff_temp = str(temp_close_date - temp_start_date) # Calcula o tempo entre data de criação e atualização
     diff_temp = diff_temp.replace(",", "")
-    my_print("Tempo de Desenvolvimento do Workflow:{0}".format(diff_temp), verbose)
+    my_print("Tempo de Desenvolvimento do Workflow: {0}".format(diff_temp), verbose)
     return (temp_start, temp_close, diff_temp)
 
 # Recupera informações sobre o tempo que levou para ser executado uma das últimas runs do pipeline e adiciona numa lista
@@ -41,6 +44,15 @@ def calculate_runs_time(runs_sucess, i, runs_time_list):
     diff_temp = run_finish_date - run_start_date # Calcula o tempo
     runs_time_list.append(diff_temp.total_seconds()) # Adiciona numa lista
     return (runs_time_list)
+
+def calculate_data_freq(runs, i, runs_time_dict):
+    run_time = runs[i].get("run_started_at") # Recupera quando a última execução da run começou
+    if (run_time[0:7] in runs_time_dict):
+        runs_time_dict[run_time[0:7]] += 1
+    else:
+        runs_time_dict[run_time[0:7]] = 1
+    return(runs_time_dict)
+
 
 # Recupera informação se uma run foi sucesso ou não. Obs: Tira da contagem aquelas que não temos permissão
 def count_runs_sucess(i, runs, sucess, failed):
@@ -71,11 +83,14 @@ def count_branch_ativation(i, runs, branch_main_ativation):
     return(branch_main_ativation) 
 
 # Calcula porcentagem de sucesso
-def calculate_perc(sucess, n, failed, branch_main_ativation):
+def calculate_perc(sucess, n, failed, branch_main_ativation, runs_time_dict):
     perc_sucess = sucess/(n-failed) *100 # Calcula porcentagem média de sucesso
     perc_branch_main = branch_main_ativation/n *100 # Calcula a porcentagem de runs relacionadas a branch main
     perc_branch_outros = (n-branch_main_ativation)/n *100 # Calcula a porcentagem de runs relacionadas a outras branchs
-    return (perc_sucess, perc_branch_main, perc_branch_outros)
+    for chave, valor in runs_time_dict.items(): # Loop para deixar os resultados em forma de porcentagem
+        perc_data = valor/n *100
+        runs_time_dict[chave] = "{0} %".format(round(perc_data, 2))
+    return (perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict)
 
 # Função principal que chama as secundárias para calcular as informações
 def calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose): # n define quantos runs serão pegas
@@ -92,12 +107,14 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
     n_runs_sucess = json_runs_sucess["total_count"] # Informação da quantidade de runs de sucesso
     runs_time_list = [] # Lista para salvar o tempo das últimas n runs
     n_jobs_list = [] # Lista para salvar o número de jobs nas últimas n runs
+    runs_time_dict = {} # Dicionário para salvar o mês em que cada run foi executada
     sucess, failed, branch_main_ativation = 0, 0, 0
     if (n_runs < n): # Ignora o caso de Pipelines que não são utilizados, mas estão no actions do repo   
         for i in range(0, n_runs): # Faz o loop das funções para o máximo de runs dísponível, mesmo que menor que n
             sucess, failed = count_runs_sucess(i, runs, sucess, failed)
             branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
             count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
+            runs_time_dict = calculate_data_freq(runs, i, runs_time_dict)
         if(n_runs > n_runs_sucess): # Verifica se temos o número de runs com sucesso suficiente
             for i in range(0, n_runs_sucess): # Faz o loop de cálculo do tempo médio, para o total de runs sucesso disponível
                 runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
@@ -105,13 +122,14 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             for i in range(0, n_runs): 
                 runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
         n_runs_analyses = n_runs             
-        perc_sucess, perc_branch_main, perc_branch_outros = calculate_perc(sucess, n_runs, failed, branch_main_ativation)
+        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n_runs, failed, branch_main_ativation, runs_time_dict)
         my_print("Só é possível calcular as estastísticas para {0} runs".format(n_runs), verbose)          
     else:   
         for i in range(0, n):
             sucess, failed = count_runs_sucess(i, runs, sucess, failed)
             branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
             count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
+            runs_time_dict = calculate_data_freq(runs, i, runs_time_dict)
         if (n > n_runs_sucess): # Verifica se temos o número de runs com sucesso suficiente
             for i in range(0, n_runs_sucess): # Faz o loop de cálculo do tempo médio, para o total de runs sucesso disponível
                 runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
@@ -119,6 +137,7 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             for i in range(0, n):
                 runs_time_list = calculate_runs_time(runs_sucess, i, runs_time_list)
         n_runs_analyses = n        
-        perc_sucess, perc_branch_main, perc_branch_outros = calculate_perc(sucess, n, failed, branch_main_ativation)
-    print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose)
-    return(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses)
+        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, failed, branch_main_ativation, runs_time_dict)
+    print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose, n_runs_analyses, runs_time_dict)
+    return(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_time_dict)
+    

@@ -24,8 +24,8 @@ def main():
     for i in range(0, n_pipelines): ## Loop para que seja rodada as funções em cada pipeline
         workflow_name, workflow_state = aux.workflow_name_state(i, workflows, verbose)
         temp_start, temp_close, diff_temp = calc.calculate_development_time(i, workflows, verbose)
-        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed = calc.calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose)
-        workflow_json = js.json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed)
+        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed, runs_time_dict = calc.calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose)
+        workflow_json = js.json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed, runs_time_dict)
         json_data[repo_path].append(workflow_json)
     json_test = str(json_data) # Salva texto dicionario em string para função de testagem
     json_test = json_test.replace("'", '"') # Corrige aspas incorretas
