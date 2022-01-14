@@ -6,9 +6,9 @@ import requests
 from datetime import datetime, timedelta
 import statistics
 import json
-import functions_aux as aux
+import Workflow_functions as aux
 import calculate_functions as calc
-import json_aux as js
+import json_functions as js
 
 def main():
     username = input("Username:") # Entrada Username git hub
@@ -19,7 +19,7 @@ def main():
     verbose = int(input("Retornar texto além do Json?:")) # Entrada binária
     name_json = str(input("Nome do arquivo de saída:")) # Entrada do nome do arquivo de saída
     name_json = name_json + ".json" # Entrada do nome do arquivo de saída
-    repo_path, full_repo_path, request_path, workflows, n_pipelines = aux.define_path(username, token, owner, repo, verbose)
+    repo_path, full_repo_path, request_path, workflows, n_pipelines = aux.define_workflow_path(username, token, owner, repo, verbose)
     json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
     for i in range(0, n_pipelines): ## Loop para que seja rodada as funções em cada pipeline
         workflow_name, workflow_state = aux.workflow_name_state(i, workflows, verbose)
