@@ -36,6 +36,7 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
     runs_time_list = [] # Lista para salvar o tempo das últimas n runs
     n_jobs_list = [] # Lista para salvar o número de jobs nas últimas n runs
     runs_time_dict = {} # Dicionário para salvar o mês em que cada run foi executada
+    runs_diff_time = [] # Lista do tempo de execuções entre as runs
     sucess, failed, branch_main_ativation = 0, 0, 0
     if (n_runs < n): # Ignora o caso de Pipelines que não são utilizados, mas estão no actions do repo   
         for i in range(0, n_runs): # Faz o loop das funções para o máximo de runs dísponível, mesmo que menor que n
@@ -43,6 +44,8 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
             jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
             runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
+            if (i+1 < n_runs): # Seu loop tem que ser até i-1
+                runs_diff_time = runsf.calculate_runs_time_between_executions(runs, i, runs_diff_time)
         if(n_runs > n_runs_sucess): # Verifica se temos o número de runs com sucesso suficiente
             for i in range(0, n_runs_sucess): # Faz o loop de cálculo do tempo médio, para o total de runs sucesso disponível
                 runs_time_list = runsf.calculate_runs_time(runs_sucess, i, runs_time_list)
@@ -58,6 +61,8 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
             jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
             runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
+            if (i+1 < n): # Seu loop tem que ser até i-1
+                runs_diff_time = runsf.calculate_runs_time_between_executions(runs, i, runs_diff_time)
         if (n > n_runs_sucess): # Verifica se temos o número de runs com sucesso suficiente
             for i in range(0, n_runs_sucess): # Faz o loop de cálculo do tempo médio, para o total de runs sucesso disponível
                 runs_time_list = runsf.calculate_runs_time(runs_sucess, i, runs_time_list)
@@ -66,6 +71,6 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
                 runs_time_list = runsf.calculate_runs_time(runs_sucess, i, runs_time_list)
         n_runs_analyses = n        
         perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, failed, branch_main_ativation, runs_time_dict)
-    prt.print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose, n_runs_analyses, runs_time_dict)
-    return(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_time_dict)
+    prt.print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose, n_runs_analyses, runs_time_dict, runs_diff_time)
+    return(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_time_dict, runs_diff_time)
     
