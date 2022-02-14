@@ -3,6 +3,7 @@ import print_functions as prt
 import jobs_functions as jbs
 import runs_functions as runsf
 
+
 # Recupera informações se uma run foi acionada relacionada branch main
 def count_branch_ativation(i, runs, branch_main_ativation):
     branch = runs[i].get("head_branch")
@@ -22,17 +23,8 @@ def calculate_perc(sucess, n, failed, branch_main_ativation, runs_time_dict):
 
 # Função principal que chama as secundárias para calcular as informações
 def calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose): # n define quantos runs serão pegas
-    id = workflows[i].get("id") # Recupera ID do pipeline
-    path = request_path + "/{0}/runs?per_page={1}".format(id, n) # Junta caminho para as runs com id do pipeline
-    res_runs = requests.get(path, auth= (username, token)) # Fazendo request
-    json_runs = res_runs.json() # Transformando em json
-    n_runs = json_runs["total_count"] # Recupera o número de runs
-    runs = json_runs["workflow_runs"] # Informação das runs
-    path_sucess = request_path + "/{0}/runs?status=success&per_page={1}".format(id, n) # caminho para últimas runs com sucesso
-    res_runs_sucess = requests.get(path_sucess, auth= (username, token)) # request das últimas runs com sucesso
-    json_runs_sucess = res_runs_sucess.json() # Transformando em json
-    runs_sucess = json_runs_sucess["workflow_runs"] # Informação das runs de sucesso
-    n_runs_sucess = json_runs_sucess["total_count"] # Informação da quantidade de runs de sucesso
+    n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Recupera o número de runs no workflow e o texto json com as informações 
+    n_runs_sucess, runs_sucess = runsf.runs_sucess_path(i, n, workflows, request_path, username, token) # Recupera o número de runs que foram sucesso entre as n últimas runs e o texto json com as informações
     runs_time_list = [] # Lista para salvar o tempo das últimas n runs
     n_jobs_list = [] # Lista para salvar o número de jobs nas últimas n runs
     runs_time_dict = {} # Dicionário para salvar o mês em que cada run foi executada
@@ -53,8 +45,7 @@ def calculate_runs(i, n, workflows, username, token, request_path, full_repo_pat
             for i in range(0, n_runs): 
                 runs_time_list = runsf.calculate_runs_time(runs_sucess, i, runs_time_list)
         n_runs_analyses = n_runs             
-        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n_runs, failed, branch_main_ativation, runs_time_dict)
-        prt.my_print("Só é possível calcular as estastísticas para {0} runs".format(n_runs), verbose)          
+        perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n_runs, failed, branch_main_ativation, runs_time_dict)         
     else:   
         for i in range(0, n):
             sucess, failed = runsf.count_runs_sucess(i, runs, sucess, failed)

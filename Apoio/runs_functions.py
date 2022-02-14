@@ -1,3 +1,4 @@
+import requests
 from datetime import datetime
 
 # Recupera informações sobre o tempo que levou para ser executado uma das últimas runs do pipeline e adiciona numa lista
@@ -30,6 +31,23 @@ def calculate_runs_time_between_executions(runs, i, runs_diff_time):
     runs_diff_time.append(diff_temp.total_seconds()) # Adiciona numa lista
     return(runs_diff_time)    
 
+def runs_path(i, n, workflows, request_path, username, token):
+    id = workflows[i].get("id") # Recupera ID do pipeline
+    path = request_path + "/{0}/runs?per_page={1}".format(id, n) # Junta caminho para as runs com id do pipeline
+    res_runs = requests.get(path, auth= (username, token)) # Fazendo request
+    json_runs = res_runs.json() # Transformando em json
+    n_runs = json_runs["total_count"] # Recupera o número de runs
+    runs = json_runs["workflow_runs"] # Informação das runs
+    return(n_runs, runs)
+
+def runs_sucess_path(i, n, workflows, request_path, username, token):
+    id = workflows[i].get("id") # Recupera ID do pipeline
+    path_sucess = request_path + "/{0}/runs?status=success&per_page={1}".format(id, n) # caminho para últimas runs com sucesso
+    res_runs_sucess = requests.get(path_sucess, auth= (username, token)) # request das últimas runs com sucesso
+    json_runs_sucess = res_runs_sucess.json() # Transformando em json
+    runs_sucess = json_runs_sucess["workflow_runs"] # Informação das runs de sucesso
+    n_runs_sucess = json_runs_sucess["total_count"] # Informação da quantidade de runs de sucesso
+    return(n_runs_sucess, runs_sucess)
 
 # Recupera informação se uma run foi sucesso ou não. Obs: Tira da contagem aquelas que não temos permissão
 def count_runs_sucess(i, runs, sucess, failed):

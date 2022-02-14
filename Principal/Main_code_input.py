@@ -6,6 +6,7 @@ import Workflow_functions as work
 import calculate_functions as calc
 import json_functions as js
 import print_functions as prt
+import pipeline_function as pipeline
 
 def main():
     username = input("Username:") # Entrada Username git hub
@@ -21,6 +22,8 @@ def main():
     for i in range(0, n_pipelines): ## Loop para que seja rodada as funções em cada pipeline
         workflow_name, workflow_state = work.workflow_name_state(i, workflows, verbose)
         temp_start, temp_close, diff_temp = work.calculate_development_time(i, workflows, verbose)
+        keywords_dict = pipeline.test_workflow(i, n, workflows, request_path, username, token, full_repo_path)
+        prt.my_print(keywords_dict, verbose)
         perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed, runs_time_dict, runs_diff_time = calc.calculate_runs(i, n, workflows, username, token, request_path, full_repo_path, verbose)
         workflow_json = js.json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyzed, runs_time_dict, runs_diff_time)
         json_data[repo_path].append(workflow_json)        
