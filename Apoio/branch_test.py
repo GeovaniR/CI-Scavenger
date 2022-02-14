@@ -38,8 +38,6 @@ def chr_remove(old, to_remove):
         new_string = new_string.replace(x, '')
     return new_string
 
-username = "Geovani Reolon"
-token = "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"
 path = "https://api.github.com/repos/apache/lucene/actions/workflows/6563726/runs"
 res_runs = requests.get(path, auth= (username, token)) # Fazendo request
 json_runs = res_runs.json() # Transformando em json

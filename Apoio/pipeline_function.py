@@ -6,7 +6,7 @@ from unidecode import unidecode
 
 def test_workflow(i, n, workflows, request_path, username, token, full_repo_path):
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Runs é o arquivo json com os dados das runs e n_runs o número de runs no workflow
-    keywords_dict = {"test":0} # Dicionário de palavras chaves relacionadas a automação de CI/CD
+    keywords_dict = {"clone":0, "compile":0, "build":0, "ci": 0, "maven":0, "tests":0, "test":0, "regression": 0} # Dicionário de palavras chaves relacionadas a automação de CI/CD
     if (n_runs < n): # Ignora o caso de Pipelines que não são utilizados, mas estão no actions do repo   
         for i in range(0, n_runs): # Faz o loop das funções para o máximo de runs dísponível, mesmo que menor que n
             keywords_dict = job_keywords_test(i, runs, keywords_dict, full_repo_path, username, token)                   
