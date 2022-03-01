@@ -1,5 +1,5 @@
 import requests
-import print_functions as prt
+import print_infos as prt
 from datetime import datetime
 
 def define_workflow_path(username, token, owner, repo, verbose): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json

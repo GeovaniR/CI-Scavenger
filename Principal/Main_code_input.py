@@ -2,11 +2,11 @@
 ### Pip install requests - Instala biblioteca
 
 ## Importando bibliotecas
-import Workflow_functions as work
-import calculate_functions as calc
-import json_functions as js
-import print_functions as prt
-import pipeline_function as pipeline
+import get_workflow_infos as work
+import calculate_stats as calc
+import build_and_validate_json as js
+import print_infos as prt
+import verify_pipeline as pipeline
 
 def main():
     username = input("Username:") # Entrada Username git hub

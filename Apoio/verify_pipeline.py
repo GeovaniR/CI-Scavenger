@@ -1,7 +1,7 @@
 import requests
-import runs_functions as runsf
+import get_runs_info as runsf
 from unidecode import unidecode
-from Keywords_list import keywords_list
+from keywords_list import keywords_list
 
 def investigate_workflow_keywords(i, n, workflows, request_path, username, token, full_repo_path):
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Runs é o arquivo json com os dados das runs e n_runs o número de runs no workflow

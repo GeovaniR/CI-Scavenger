@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-import runs_sucess as run_sucess 
+import get_sucess_runs_info as run_sucess 
 
 def loop_to_calculate_n_runs_execution_time(n_runs, n_runs_sucess, runs_sucess, runs_time_list): # Calcula o tempo de execução da últimas n_runs que foram sucesso , caso impossível pega todas as runs disponível 
     if(n_runs > n_runs_sucess): # Verifica se temos o número de runs com sucesso suficiente, pois o workflow pode ter 20 runs e só ter 6 runs que foram sucesso

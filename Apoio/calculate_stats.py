@@ -1,8 +1,7 @@
-import requests
-import print_functions as prt
-import jobs_functions as jbs
-import runs_functions as runsf
-import runs_sucess as run_sucess
+import print_infos as prt
+import get_job_amount as jbs
+import get_runs_info as runsf
+import get_sucess_runs_info as run_sucess
 
 # Recupera informações se uma run foi acionada relacionada a branch main
 def count_branch_ativation(i, runs, branch_main_ativation): # Função que conta a quantidade de runs que foram ativadas pela branch main

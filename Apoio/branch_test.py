@@ -1,8 +1,7 @@
 import json
 from datetime import datetime, timedelta
 import requests
-import re
-import runs_functions as runsf
+import get_runs_info as runsf
 from unidecode import unidecode
 #json_data = """{'apache/lucene': [{'n_worfklows': 3}, 
 #{'Workflow_Name': 'Gradle Precommit Checks', 'State': 'active', 'Created_at': '2021-03-10T07:34:27.000-03:00', 'Updated_at': '2021-10-12T10:07:17.000-03:00', 'Dev_time': '216 days 2:32:50', 'Success_rate': '55.0 %', 'Branch_Main_rate': '5.0 %', 'Other_Branchs_rate': '95.0 %', 'Mean(Execution time)': '0:08:46', 'Std_deviation(Execution time)': '0:01:03', 'Jobs_mean': '2', 'Total_runs': 1976}, 

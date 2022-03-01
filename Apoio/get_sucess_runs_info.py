@@ -24,7 +24,6 @@ def runs_sucess_path(i, n, workflows, request_path, username, token): # Função
     n_runs_sucess = json_runs_sucess["total_count"] # Quantidade de runs de sucesso
     return(n_runs_sucess, runs_sucess)
 
-
 # Recupera informação se uma run foi sucesso ou não. Obs: Tira da contagem aquelas que não temos permissão
 def count_runs_sucess(i, runs, sucess, private):
     conclusion = runs[i].get("conclusion") # Salva o estado de conclusão da run
