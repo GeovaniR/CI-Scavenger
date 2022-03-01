@@ -17,7 +17,7 @@ def investigate_workflow_keywords(i, n, workflows, request_path, username, token
 def chr_remove(old, to_remove): # Função que remove caracteres especiais
     new_string = old.lower() # Transforma string para inteiramente minúsculo
     for x in to_remove: # Para cada caractere na lista dos que devem ser retirados
-        new_string = new_string.replace(x, '') # substitui caractere especial por espaço vázio
+        new_string = new_string.replace(x, '') # substitui caracter especial por espaço vázio
     return new_string
 
 def compare_word_with_dict(name, keywords_list): # Função que analisa a existência da palavra dentro do dicionário

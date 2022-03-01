@@ -4,19 +4,19 @@ from datetime import datetime
 
 def define_workflow_path(username, token, owner, repo, verbose): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json
     repo_path = owner + "/" + repo # Caminho até o repositório
-    api_url = "https://api.github.com/repos/" 
-    full_repo_path = api_url + repo_path
+    api_url = "https://api.github.com/repos/" # Caminho da api
+    full_repo_path = api_url + repo_path # Forma caminho até o repositório
     request_path = full_repo_path + "/actions/workflows" # Caminho que recupera os workflows
-    request_workflows = requests.get(request_path, auth= (username, token)) # Comando que recupera as informações
-    workflows_json = request_workflows.json()
+    request_workflows = requests.get(request_path, auth= (username, token)) # Request das informações dos workflows
+    workflows_json = request_workflows.json() # Transforma em .json
     n_pipelines = workflows_json["total_count"] # Obtendo a quantidade de workflows no repositório
-    workflows = workflows_json["workflows"]
-    prt.my_print("----------------------------------------------------------------------", verbose)
+    workflows = workflows_json["workflows"] # Salvando varíavel com informações do workflow
+    prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     prt.my_print("Número de worflows: {0}".format(n_pipelines), verbose)
     return(repo_path, full_repo_path, request_path, workflows, n_pipelines)
 
-def workflow_name_state(i, workflows, verbose):
-    prt.my_print("----------------------------------------------------------------------", verbose)
+def workflow_name_state(i, workflows, verbose): # Função que recupera o nome e o estado do workflow
+    prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     workflow_name = workflows[i].get("name") # Recupera o nome do Pipeline
     workflow_state = workflows[i].get("state") # Recupera se o Pipeline está ativo
     prt.my_print("Workflow Name: {0}".format(workflow_name), verbose) 

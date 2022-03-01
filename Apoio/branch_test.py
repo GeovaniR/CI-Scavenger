@@ -30,35 +30,35 @@ from unidecode import unidecode
 #    teste1[run_time_start[0:7]] += 1
 #else:
 #    teste1[run_time_start[0:7]] = 1
-keywords_dict = {"test":0}
+# keywords_dict = {"test":0}
 
-def chr_remove(old, to_remove):
-    new_string = old
-    for x in to_remove:
-        new_string = new_string.replace(x, '')
-    return new_string
+# def chr_remove(old, to_remove):
+#     new_string = old
+#     for x in to_remove:
+#         new_string = new_string.replace(x, '')
+#     return new_string
 
-path = "https://api.github.com/repos/apache/lucene/actions/workflows/6563726/runs"
-res_runs = requests.get(path, auth= (username, token)) # Fazendo request
-json_runs = res_runs.json() # Transformando em json
-n_runs = json_runs["total_count"] # Recupera o número de runs
-runs = json_runs["workflow_runs"] # Informação das runs
-id_jobs = runs[0].get("id")
-condition = runs[0].get("conclusion")
-if (condition != "action_required"):
-    path_jobs = "https://api.github.com/repos/apache/lucene" + "/actions/runs/{0}/jobs".format(id_jobs)
-    res_jobs = requests.get(path_jobs, auth= (username, token)) 
-    jobs_json = res_jobs.json()
-    n_jobs = int(jobs_json["total_count"])
-    jobs = jobs_json["jobs"]
-    steps = jobs[0].get("steps")
-    print(steps[0].get("name"))
-    for j in range(n_jobs):
-        job_name = jobs[j].get("name")
-        job_name = chr_remove(job_name, "!@#$%¨&*()_-=+'?:<>,.\|^~`}{][;")
-        job_name = unidecode(job_name)
-        lista_palavras = job_name.split()
-        for palavra in lista_palavras:
-            if (palavra in keywords_dict):
-                keywords_dict[palavra] += 1
-print(keywords_dict)
+# path = "https://api.github.com/repos/apache/lucene/actions/workflows/6563726/runs"
+# res_runs = requests.get(path, auth= (username, token)) # Fazendo request
+# json_runs = res_runs.json() # Transformando em json
+# n_runs = json_runs["total_count"] # Recupera o número de runs
+# runs = json_runs["workflow_runs"] # Informação das runs
+# id_jobs = runs[0].get("id")
+# condition = runs[0].get("conclusion")
+# if (condition != "action_required"):
+#     path_jobs = "https://api.github.com/repos/apache/lucene" + "/actions/runs/{0}/jobs".format(id_jobs)
+#     res_jobs = requests.get(path_jobs, auth= (username, token)) 
+#     jobs_json = res_jobs.json()
+#     n_jobs = int(jobs_json["total_count"])
+#     jobs = jobs_json["jobs"]
+#     steps = jobs[0].get("steps")
+#     print(steps[0].get("name"))
+#     for j in range(n_jobs):
+#         job_name = jobs[j].get("name")
+#         job_name = chr_remove(job_name, "!@#$%¨&*()_-=+'?:<>,.\|^~`}{][;")
+#         job_name = unidecode(job_name)
+#         lista_palavras = job_name.split()
+#         for palavra in lista_palavras:
+#             if (palavra in keywords_dict):
+#                 keywords_dict[palavra] += 1
+# print(keywords_dict)
