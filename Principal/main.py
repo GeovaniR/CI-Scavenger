@@ -1,3 +1,3 @@
 ## Importando bibliotecas
-from Main_code import main
+from main_code import main
 main()

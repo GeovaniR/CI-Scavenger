@@ -3,11 +3,11 @@
 
 ## Importando bibliotecas
 import sys, getopt
-import calculate_functions as calc
-import json_functions as js
-import Workflow_functions as work
-import print_functions as prt
-import pipeline_function as pipeline
+import calculate_stats as calc
+import build_and_validate_json as js
+import get_workflow_infos as work
+import print_infos as prt
+import verify_pipeline as pipeline
 
 def main(argv):
     ## Definindo entradas
@@ -43,7 +43,7 @@ def main(argv):
     repo_path, full_repo_path, request_path, workflows, n_pipelines = work.define_workflow_path(username, token, owner, repo, verbose)
     json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
     for i in range(0, n_pipelines): ## Loop para que seja rodada as funções em cada pipeline
-        validate_worflow = pipeline.investigate_workflow_keywords(i, n, workflows, request_path, username, token, full_repo_path) # Valdia se o workflow tem destino a CI/CD para permitir análise
+        validate_worflow = pipeline.investigate_workflow_ci_cd(i, n, workflows, request_path, username, token, full_repo_path) # Valdia se o workflow tem destino a CI/CD para permitir análise
         if (validate_worflow):
             workflow_name, workflow_state = work.workflow_name_state(i, workflows, verbose)
             temp_start, temp_close, diff_temp = work.calculate_development_time(i, workflows, verbose)

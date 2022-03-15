@@ -8,14 +8,15 @@ def my_print(string_param, verbose):
     return()
 
 # Função que printa informações
-def print_information(perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, verbose, n_runs_analyses, runs_time_dict, runs_diff_time):
-    my_print("Porcentagem de sucesso: {:.2f} %".format(perc_sucess), verbose)       
-    my_print("Porcentagem de Execuções relacionadas a Branch Main {:.2f} %  /  Porcentagem ligada a Ramificações {:.2f} %".format(perc_branch_main, perc_branch_outros), verbose)
-    my_print("Média (Tempo de Execução): {0}  /  Desvio Padrão (Tempo de Execução): {1}".format(timedelta(seconds= int(statistics.mean(runs_time_list))), timedelta(seconds= int(statistics.stdev(runs_time_list)))), verbose)
-    my_print("Média (Tempo entre runs): {0}  /  Desvio Padrão (Tempo entre runs): {1}".format(timedelta(seconds= int(statistics.mean(runs_diff_time))), timedelta(seconds= int(statistics.stdev(runs_diff_time)))), verbose)
-    my_print("Média de jobs no Pipeline: {0}".format(statistics.mean(n_jobs_list)), verbose)
-    my_print("Número de runs: {0}".format(n_runs), verbose)
-    my_print("Número de runs analisadas: {0}".format(n_runs_analyses), verbose)
+def print_information(verbose, store_infos_dict, runs_time_dict):
+    my_print("Porcentagem de sucesso: {:.2f} %".format(store_infos_dict["perc_sucess"]), verbose)       
+    my_print("Porcentagem de Execuções relacionadas a Branch Main {:.2f} %  /  Porcentagem ligada a Ramificações {:.2f} %".format(store_infos_dict["perc_branch_main"], store_infos_dict["perc_branch_outros"]), verbose)
+    my_print("Média (Tempo de Execução): {0}  /  Desvio Padrão (Tempo de Execução): {1}".format(store_infos_dict["runs_mean_time"], store_infos_dict["runs_sd_time"]), verbose)
+    my_print("Média (Tempo entre runs): {0}  /  Desvio Padrão (Tempo entre runs): {1}".format(store_infos_dict["runs_mean_time_between_executions"], store_infos_dict["runs_sd_time_between_executions"]), verbose)
+    my_print("Média de jobs no Pipeline: {0}".format(store_infos_dict["mean_jobs"]), verbose)
+    my_print("Desvio padrão de jobs no Pipeline: {0}".format(store_infos_dict["sd_jobs"]), verbose)
+    my_print("Número de runs: {0}".format(store_infos_dict["n_runs"]), verbose)
+    my_print("Número de runs analisadas: {0}".format(store_infos_dict["n_runs_analyses"]), verbose)
     for chave, valor in runs_time_dict.items():
         my_print("Porcentagem de execuções em {0}: {1}".format(chave, valor), verbose)
     return()

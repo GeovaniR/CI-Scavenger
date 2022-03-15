@@ -13,10 +13,10 @@ def define_workflow_path(username, token, owner, repo, verbose): ## Define os ca
     workflows = workflows_json["workflows"] # Salvando varíavel com informações do workflow
     prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     prt.my_print("Número de worflows: {0}".format(n_pipelines), verbose)
+    prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     return(repo_path, full_repo_path, request_path, workflows, n_pipelines)
 
 def workflow_name_state(i, workflows, verbose): # Função que recupera o nome e o estado do workflow
-    prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     workflow_name = workflows[i].get("name") # Recupera o nome do Pipeline
     workflow_state = workflows[i].get("state") # Recupera se o Pipeline está ativo
     prt.my_print("Workflow Name: {0}".format(workflow_name), verbose) 
@@ -27,12 +27,13 @@ def workflow_name_state(i, workflows, verbose): # Função que recupera o nome e
 def calculate_development_time(i, workflows, verbose):
     temp_start = workflows[i].get("created_at") # Recupera quando o workflow foi criado
     temp_close = workflows[i].get("updated_at") # Recupera quando foi a última atualização do workflow
+    temp_start_date = datetime.strptime(temp_start, "%Y-%m-%dT%H:%M:%S.%f%z") # Transforma de string para data
+    temp_close_date = datetime.strptime(temp_close, "%Y-%m-%dT%H:%M:%S.%f%z") # Transforma de string para data
     prt.my_print("Data de Criação: {0}".format(temp_start), verbose)
     prt.my_print("Última atualização: {0}".format(temp_close), verbose)
-    temp_start_date = datetime(year = int(temp_start[0:4]), month = int(temp_start[5:7]), day = int(temp_start[8:10]), hour = int(temp_start[11:13]), minute = int(temp_start[14:16]), second = int(temp_start[17:19]))
-    temp_close_date = datetime(year = int(temp_close[0:4]), month = int(temp_close[5:7]), day = int(temp_close[8:10]), hour = int(temp_close[11:13]), minute = int(temp_close[14:16]), second = int(temp_close[17:19]))
     diff_temp = str(temp_close_date - temp_start_date) # Calcula o tempo entre data de criação e atualização
     diff_temp = diff_temp.replace(",", "")
     prt.my_print("Tempo de Desenvolvimento do Workflow: {0}".format(diff_temp), verbose)
+    prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     return (temp_start, temp_close, diff_temp)    
         
