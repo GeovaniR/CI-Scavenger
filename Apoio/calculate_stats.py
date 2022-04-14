@@ -3,7 +3,7 @@ import get_job_amount as jbs
 import get_runs_info as runsf
 import get_sucess_runs_info as run_sucess
 import statistics
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Recupera informações se uma run foi acionada relacionada a branch main
 def count_branch_ativation(i, runs, branch_main_ativation): # Função que conta a quantidade de runs que foram ativadas pela branch main
@@ -23,14 +23,20 @@ def calculate_perc(sucess, n_runs, private, branch_main_ativation, runs_time_dic
     return (perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict)
 
 # Função que armazena as informações/estatísticas calculadas em um dicíonário
-def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time):
+def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess):
     store_infos_dict["perc_sucess"] = round(perc_sucess, 2)
     store_infos_dict["perc_branch_main"] = round(perc_branch_main, 2)
     store_infos_dict["perc_branch_outros"] = round(perc_branch_outros, 2)
     store_infos_dict["runs_mean_time"] = timedelta(seconds = int(statistics.mean(runs_time_list)))
-    store_infos_dict["runs_sd_time"] = timedelta(seconds= int(statistics.stdev(runs_time_list)))
+    if (n_runs_sucess > 2): # Verifica se tem pelo menos 2 runs de sucesso, porque se tiver menos não dá pra calcular desvio padrão
+        store_infos_dict["runs_sd_time"] = timedelta(seconds= int(statistics.stdev(runs_time_list)))
+    else:
+        store_infos_dict["runs_sd_time"] = -1
     store_infos_dict["runs_mean_time_between_executions"] = timedelta(seconds= int(statistics.mean(runs_diff_time)))
-    store_infos_dict["runs_sd_time_between_executions"] = timedelta(seconds= int(statistics.stdev(runs_diff_time)))
+    if (n_runs > 3): # Checa se tem pelo menos 3 runs no workflow que é o mínimo necessário para calcular sd entre runs
+        store_infos_dict["runs_sd_time_between_executions"] = timedelta(seconds= int(statistics.stdev(runs_diff_time)))
+    else:
+        store_infos_dict["runs_sd_time_between_executions"] = -1  
     store_infos_dict["mean_jobs"] = round(statistics.mean(n_jobs_list), 2)
     store_infos_dict["sd_jobs"] = round(statistics.stdev(n_jobs_list), 2)
     store_infos_dict["n_runs"] = n_runs
@@ -43,7 +49,7 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
     n_runs_sucess, runs_sucess = run_sucess.runs_sucess_path(i, n, workflows, request_path, username, token) # Recupera o número de runs que foram sucesso entre as n últimas runs e o texto json com as informações
     store_infos_dict = {} # Lista para armazenar as estatísticas que vamos calcular
     runs_time_dict = {} # Dicionário para salvar o mês em que cada run foi executada
-    if (n_runs_sucess): # Verifica se tem alguma run de sucesso, se não tiver é descartado
+    if (n_runs_sucess): # Verifica se tem pelo menos alguma run de sucesso (Mínimo para calcular estatísticas)
         runs_time_list = [] # Lista para salvar o tempo das últimas n runs
         n_jobs_list = [] # Lista para salvar o número de jobs nas últimas n runs
         runs_diff_time = [] # Lista do tempo de execuções entre as runs
@@ -52,23 +58,23 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
             for i in range(0, n_runs): # Faz o loop das funções para o máximo de runs dísponível, mesmo que menor que n
                 sucess, private = run_sucess.count_runs_sucess(i, runs, sucess, private)
                 branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
-                jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
                 runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
-                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n_runs)
+                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n_runs) 
+                jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n_runs, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n_runs  # Armazena que o número de runs análisadas é igual ao número total de runs disponível         
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n_runs, private, branch_main_ativation, runs_time_dict)     
-        else:   
-            for i in range(0, n): # Primeiro fazemos o Loop para indentificar a quantidade de runs de sucesso
+        else:
+            for i in range(0, n): # Faz o loop das funções para quantidade de runs solicitadas
                 sucess, private = run_sucess.count_runs_sucess(i, runs, sucess, private)
                 branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
-                jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
                 runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
-                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n)
+                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n) 
+            jbs.sample_jobs_runs(n, runs, n_jobs_list, username, token, full_repo_path)  
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n  # Armazena que o número de runs análisadas é igual ao solicitado pelo usuário
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, private, branch_main_ativation, runs_time_dict)
-        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time)    
+        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess)    
         prt.print_information(verbose, store_infos_dict, runs_time_dict)        
     return(store_infos_dict, runs_time_dict)
         

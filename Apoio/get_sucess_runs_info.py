@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+from log_requests import requests_dict_count
 
 # Recupera o tempo de execução das últimas runs de sucesso estipuladas
 def calculate_run_sucess_execution_time(runs_sucess, i, runs_time_list):
@@ -18,6 +19,7 @@ def runs_sucess_path(i, n, workflows, request_path, username, token): # Função
     id = workflows[i].get("id") # Recupera ID do pipeline
     path_sucess = request_path + "/{0}/runs?status=success&per_page={1}".format(id, n) # caminho para últimas n runs com sucesso
     res_runs_sucess = requests.get(path_sucess, auth= (username, token)) # request das últimas runs com sucesso
+    requests_dict_count["runs_sucess_path"] += 1 # Adicionando que a função executou mais um request
     json_runs_sucess = res_runs_sucess.json() # Transformando em json
     runs_sucess = json_runs_sucess["workflow_runs"] # Informação das runs de sucesso
     n_runs_sucess = int(json_runs_sucess["total_count"]) # Quantidade de runs de sucesso

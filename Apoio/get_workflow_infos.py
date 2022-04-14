@@ -1,6 +1,7 @@
 import requests
 import print_infos as prt
 from datetime import datetime
+from log_requests import requests_dict_count
 
 def define_workflow_path(username, token, owner, repo, verbose): ## Define os caminhos, cálcula o número de pipelines e salva as informçaões dos workflow em um json
     repo_path = owner + "/" + repo # Caminho até o repositório
@@ -8,6 +9,7 @@ def define_workflow_path(username, token, owner, repo, verbose): ## Define os ca
     full_repo_path = api_url + repo_path # Forma caminho até o repositório
     request_path = full_repo_path + "/actions/workflows" # Caminho que recupera os workflows
     request_workflows = requests.get(request_path, auth= (username, token)) # Request das informações dos workflows
+    requests_dict_count["define_workflow_path"] += 1 # Adicionando que a função executou mais um request
     workflows_json = request_workflows.json() # Transforma em .json
     n_pipelines = workflows_json["total_count"] # Obtendo a quantidade de workflows no repositório
     workflows = workflows_json["workflows"] # Salvando varíavel com informações do workflow

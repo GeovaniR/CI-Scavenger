@@ -1,12 +1,13 @@
-from pickle import FALSE
 import requests
 import get_runs_info as runsf
 from unidecode import unidecode
+from datetime import datetime
 from keywords_list import keywords_list
+from log_requests import requests_dict_count
 
 def investigate_workflow_ci_cd(i, n, workflows, request_path, username, token, full_repo_path):
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Runs é o arquivo json com os dados das runs e n_runs o número de runs no workflow
-    any_open_run = verify_existence_open_run(0, runs, n_runs) # Verificando se tem algum run aberta no workflow
+    any_open_run = verify_existence_open_run_and_date(0, runs, n_runs) # Verificando se tem algum run aberta no workflow e quando foi sua data
     if (any_open_run): # checa se tem alguma run aberta para ser possível analisar, então analisa keywords
         word_found_status = verify_workflow_words(i, workflows, keywords_list) # Testa o nome do workflow
         if (word_found_status): # Testa se a palavra foi encontrada (word_found_status igual a True)
@@ -63,6 +64,7 @@ def build_jobs_path(i, runs, full_repo_path, username, token): # A função enco
     id_jobs = runs[i].get("id") # recupera id da run
     path_jobs = full_repo_path + "/actions/runs/{0}/jobs".format(id_jobs) # define caminho para os jobs da run
     res_jobs = requests.get(path_jobs, auth= (username, token)) # Executa chamada para informações dos jobs
+    requests_dict_count["build_jobs_path"] += 1 # Adicionando que a função executou mais um request
     jobs_json = res_jobs.json() # Transformar informações para formato json
     n_jobs = int(jobs_json["total_count"]) # Recupera a quantidade total de jobs
     jobs = jobs_json["jobs"] # Entra nas informações sobre os jobs
@@ -80,15 +82,22 @@ def verify_jobs_and_steps(i, runs, keywords_list, full_repo_path, username, toke
              return(True) # Retorna que a palavra foi encontrada                     
     return(False) # Se chegar até aqui retorna que a palavra não foi encontrada
 
-def verify_existence_open_run(i, runs, n_runs):
-    if (n_runs): #Checa se tem pelo menos alguma run no workflow 
+def verify_existence_open_run_and_date(i, runs, n_runs):
+    if (n_runs): # Checa se tem pelo menos alguma run no workflow
         condition = runs[i].get("conclusion")  # Obtém status da conclusão da última run para analisar se é fechado
         while (condition == "action_required" or condition == "Skipped"): # Loop até achar uma run sem acesso privado
             i += 1 # soma 1 para ir para run seguinte
             if (i >= n_runs): # Se já tiver ultrapassado o número de runs existente, então não temos run aberta
                 return(False) # Vai retornar dizendo que não encontrou run aberta
             else:
-                condition = runs[i].get("conclusion")       
-        return(True)
+                condition = runs[i].get("conclusion")
+        last_run_date = runs[i].get("created_at") # Recupera quando foi criada a última run aberta
+        run_start_date = datetime.strptime(last_run_date, "%Y-%m-%dT%H:%M:%SZ") # Transforma de formato string para data
+        today = datetime.today() # Recupera data de hoje
+        dif = today - run_start_date # Calcula diferença entre a data que a última run começou e o dia atual
+        if (dif.days > 365): # Se a última run aberta tiver mais de um ano descarta workflow
+            return(False)
+        else:
+            return(True)
     else:
-        return(False)          
+        return(False)

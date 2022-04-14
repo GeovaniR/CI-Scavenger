@@ -1,7 +1,5 @@
 ## Arquivo com funções para formatação Json
 import json
-import statistics
-from datetime import timedelta
 
 # Função que valida se a formatação está correta
 def validateJSON(json_data):
@@ -13,7 +11,9 @@ def validateJSON(json_data):
         return False
     return True
 
-def build_json_file(is_valid, name_json, json_data):
+def build_json_file(name_json, json_data):
+    name_json = name_json + ".json" # Entrada do nome do arquivo de saída
+    is_valid = validateJSON(json_data) # Valida Texto que será transformado em Json
     if (is_valid): # Testa se o arquivo está corretamente formatado em .json
         with open(name_json, 'w', encoding='utf-8') as outfile: # Cria arquivo .json
             json.dump(json_data, outfile, ensure_ascii=False, indent=2)

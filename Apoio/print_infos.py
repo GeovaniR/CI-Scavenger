@@ -1,6 +1,3 @@
-import statistics
-from datetime import datetime, timedelta
-
 ## Função que verifica se deve printar ou não os resultados
 def my_print(string_param, verbose):
     if(verbose):

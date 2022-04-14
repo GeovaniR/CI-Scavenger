@@ -1,4 +1,5 @@
 import requests
+from log_requests import requests_dict_count
 from datetime import datetime
 import get_sucess_runs_info as run_sucess 
 
@@ -12,11 +13,11 @@ def loop_to_calculate_n_runs_execution_time(n_runs, n_runs_sucess, runs_sucess, 
     return(runs_time_list)
     
 def calculate_runs_data_freq(runs, i, runs_time_dict):
-    run_time = runs[i].get("run_started_at") # Recupera quando a última execução da run começou
+    run_time = runs[i].get("run_started_at") # Recupera quando a última execução da run começou   
     if (run_time[0:7] in runs_time_dict):
         runs_time_dict[run_time[0:7]] += 1
     else:
-        runs_time_dict[run_time[0:7]] = 1
+        runs_time_dict[run_time[0:7]] = 1        
     return(runs_time_dict)
 
 def calculate_time_between_runs_execution(runs, i, runs_diff_time, n_runs):
@@ -33,8 +34,9 @@ def runs_path(i, n, workflows, request_path, username, token):
     id = workflows[i].get("id") # Recupera ID do pipeline
     path = request_path + "/{0}/runs?per_page={1}".format(id, n) # Junta caminho para as runs com id do pipeline
     res_runs = requests.get(path, auth= (username, token)) # Fazendo request
+    requests_dict_count["runs_path"] += 1 # Adicionando que a função executou mais um request
     json_runs = res_runs.json() # Transformando em json
     n_runs = int(json_runs["total_count"]) # Recupera o número de runs
     runs = json_runs["workflow_runs"] # Informação das runs
     return(n_runs, runs)
-    
+   
