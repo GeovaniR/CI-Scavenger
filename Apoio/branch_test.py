@@ -61,6 +61,3 @@ from unidecode import unidecode
 #             if (palavra in keywords_dict):
 #                 keywords_dict[palavra] += 1
 # print(keywords_dict),
-limite = requests.get("https://api.github.com/rate_limit", auth= ("Geovani Reolon", "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"))
-limite_json = limite.json()
-print(limite_json)
