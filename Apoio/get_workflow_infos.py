@@ -31,6 +31,8 @@ def calculate_development_time(i, workflows, verbose):
     temp_close = workflows[i].get("updated_at") # Recupera quando foi a última atualização do workflow
     temp_start_date = datetime.strptime(temp_start, "%Y-%m-%dT%H:%M:%S.%f%z") # Transforma de string para data
     temp_close_date = datetime.strptime(temp_close, "%Y-%m-%dT%H:%M:%S.%f%z") # Transforma de string para data
+    temp_start = temp_start[0:10] # Salva só Ano-Mês-Dia
+    temp_close = temp_close[0:10] # Salva só Ano-Mês-Dia
     prt.my_print("Data de Criação: {0}".format(temp_start), verbose)
     prt.my_print("Última atualização: {0}".format(temp_close), verbose)
     diff_temp = str(temp_close_date - temp_start_date) # Calcula o tempo entre data de criação e atualização

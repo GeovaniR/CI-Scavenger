@@ -6,8 +6,8 @@ def my_print(string_param, verbose):
 
 # Função que printa informações
 def print_information(verbose, store_infos_dict, runs_time_dict):
-    my_print("Porcentagem de sucesso: {:.2f} %".format(store_infos_dict["perc_sucess"]), verbose)       
-    my_print("Porcentagem de Execuções relacionadas a Branch Main {:.2f} %  /  Porcentagem ligada a Ramificações {:.2f} %".format(store_infos_dict["perc_branch_main"], store_infos_dict["perc_branch_outros"]), verbose)
+    my_print("Porcentagem de sucesso: {0} %".format(store_infos_dict["perc_sucess"]), verbose)       
+    my_print("Porcentagem de Execuções relacionadas a Branch Main {0} %  /  Porcentagem ligada a Ramificações {1} %".format(store_infos_dict["perc_branch_main"], store_infos_dict["perc_branch_outros"]), verbose)
     my_print("Média (Tempo de Execução): {0}  /  Desvio Padrão (Tempo de Execução): {1}".format(store_infos_dict["runs_mean_time"], store_infos_dict["runs_sd_time"]), verbose)
     my_print("Média (Tempo entre runs): {0}  /  Desvio Padrão (Tempo entre runs): {1}".format(store_infos_dict["runs_mean_time_between_executions"], store_infos_dict["runs_sd_time_between_executions"]), verbose)
     my_print("Média de jobs no Pipeline: {0}".format(store_infos_dict["mean_jobs"]), verbose)

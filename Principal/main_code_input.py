@@ -17,7 +17,7 @@ def main():
     n = int(input("Número de runs para ánalise:")) # Entrada do número de runs que vamos analisar
     verbose = int(input("Retornar texto além do Json?:")) # Entrada binária
     name = str(input("Nome do arquivo de saída:")) # Entrada do nome do arquivo de saída
-    output = str(input("Formato de saída(csv ou json)"))
+    output = str(input("Formato de saída(csv ou json):"))
     repo_path, full_repo_path, request_path, workflows, n_pipelines = work.define_workflow_path(username, token, owner, repo, verbose)
     json_data = {repo_path:[{"n_worfklows" : n_pipelines}]}
     df_data = []

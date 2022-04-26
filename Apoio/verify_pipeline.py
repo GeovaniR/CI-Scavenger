@@ -7,13 +7,13 @@ from log_requests import requests_dict_count
 
 def investigate_workflow_ci_cd(i, n, workflows, request_path, username, token, full_repo_path):
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Runs é o arquivo json com os dados das runs e n_runs o número de runs no workflow
-    any_open_run = verify_existence_open_run_and_date(0, runs, n_runs) # Verificando se tem algum run aberta no workflow e quando foi sua data
+    any_open_run = verify_existence_open_run_and_date(runs, n_runs) # Verificando se tem algum run aberta no workflow e quando foi sua data
     if (any_open_run): # checa se tem alguma run aberta para ser possível analisar, então analisa keywords
         word_found_status = verify_workflow_words(i, workflows, keywords_list) # Testa o nome do workflow
         if (word_found_status): # Testa se a palavra foi encontrada (word_found_status igual a True)
             return(True) # Caso tenha encontrado já retorna que o workflow pode ser testado
         else: # Caso contrário testa os jobs e steps
-            word_found_status = verify_jobs_and_steps(0, runs, keywords_list, full_repo_path, username, token)
+            word_found_status = verify_jobs_and_steps(runs, keywords_list, full_repo_path, username, token)
             if (word_found_status): # Testa se encontrou alguma palavra no nome do job e passos
                 return(True) # Caso tenha encontrado já retorna que o workflow pode ser testado                  
         return(False) # Caso não tenha encontrado retorna false
@@ -70,7 +70,8 @@ def build_jobs_path(i, runs, full_repo_path, username, token): # A função enco
     jobs = jobs_json["jobs"] # Entra nas informações sobre os jobs
     return(n_jobs, jobs)
 
-def verify_jobs_and_steps(i, runs, keywords_list, full_repo_path, username, token): # i percore o número de runs
+def verify_jobs_and_steps(runs, keywords_list, full_repo_path, username, token): # i percore o número de runs
+    i = 0
     n_jobs, jobs = build_jobs_path(i, runs, full_repo_path, username, token) # Obtém o número de jobs e as informações desses jobs
     for j in range(n_jobs): # Percore cada Job existente
         word_found_status = verify_jobs_words(j, jobs, keywords_list) # Testa o nome do job
@@ -82,8 +83,9 @@ def verify_jobs_and_steps(i, runs, keywords_list, full_repo_path, username, toke
              return(True) # Retorna que a palavra foi encontrada                     
     return(False) # Se chegar até aqui retorna que a palavra não foi encontrada
 
-def verify_existence_open_run_and_date(i, runs, n_runs):
+def verify_existence_open_run_and_date(runs, n_runs):
     if (n_runs): # Checa se tem pelo menos alguma run no workflow
+        i = 0
         condition = runs[i].get("conclusion")  # Obtém status da conclusão da última run para analisar se é fechado
         while (condition == "action_required" or condition == "Skipped"): # Loop até achar uma run sem acesso privado
             i += 1 # soma 1 para ir para run seguinte
