@@ -61,3 +61,7 @@ from unidecode import unidecode
 #             if (palavra in keywords_dict):
 #                 keywords_dict[palavra] += 1
 # print(keywords_dict),
+# df = pd.DataFrame(df_data, columns=['workflow_name', "workflow_state", "temp_start", "temp_close", "diff_temp", "runs_mean_time", "runs_sd_time", 
+#    "runs_mean_time_between_executions", "runs_sd_time_between_executions", "mean_jobs", "sd_jobs", "perc_sucess", "perc_branch_main", "perc_branch_outros", 
+#    "n_runs", "n_runs_analyzed", "runs_freq"])
+# workflow_json = {**workflow_json, **runs_time_dict} # Junta com o dicionário que aprenseta a data de frequência da execução da runs

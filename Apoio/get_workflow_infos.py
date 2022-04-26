@@ -18,15 +18,17 @@ def define_workflow_path(username, token, owner, repo, verbose): ## Define os ca
     prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
     return(repo_path, full_repo_path, request_path, workflows, n_pipelines)
 
-def workflow_name_state(i, workflows, verbose): # Função que recupera o nome e o estado do workflow
+def workflow_name_state(i, workflows, verbose, store_infos_dict): # Função que recupera o nome e o estado do workflow
     workflow_name = workflows[i].get("name") # Recupera o nome do Pipeline
     workflow_state = workflows[i].get("state") # Recupera se o Pipeline está ativo
     prt.my_print("Workflow Name: {0}".format(workflow_name), verbose) 
-    prt.my_print("Estado do Workflow: {0}".format(workflow_state), verbose) 
-    return(workflow_name, workflow_state)
+    prt.my_print("Estado do Workflow: {0}".format(workflow_state), verbose)
+    store_infos_dict["Workflow_Name"] = workflow_name
+    store_infos_dict["State"] = workflow_state
+    return(store_infos_dict)
 
 ## Recupera quando o pipeline foi criado e a ultima vez que foi atualizado, além de calcular a diferença entre essas datas *calculate_development_time*
-def calculate_development_time(i, workflows, verbose):
+def calculate_development_time(i, workflows, verbose, store_infos_dict):
     temp_start = workflows[i].get("created_at") # Recupera quando o workflow foi criado
     temp_close = workflows[i].get("updated_at") # Recupera quando foi a última atualização do workflow
     temp_start_date = datetime.strptime(temp_start, "%Y-%m-%dT%H:%M:%S.%f%z") # Transforma de string para data
@@ -39,5 +41,8 @@ def calculate_development_time(i, workflows, verbose):
     diff_temp = diff_temp.replace(",", "")
     prt.my_print("Tempo de Desenvolvimento do Workflow: {0}".format(diff_temp), verbose)
     prt.my_print("----------------------------------------------------------------------", verbose) # Embelezando saídas
-    return (temp_start, temp_close, diff_temp)    
+    store_infos_dict["Dev_time"] = diff_temp
+    store_infos_dict["Created_at"] = temp_start
+    store_infos_dict["Updated_at"] = temp_close
+    return (store_infos_dict)    
         

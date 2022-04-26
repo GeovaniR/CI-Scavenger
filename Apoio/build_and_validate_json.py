@@ -21,14 +21,17 @@ def build_json_file(name_json, json_data):
         return(print("Arquivo json não está formatado corretamente")) 
 
 # Função que coloca os resultados da aplicação no formato dicionário para depois transformar em .json
-def json_transform(workflow_name, workflow_state, temp_start, temp_close, diff_temp, store_infos_dict, runs_time_dict):
+def json_transform(store_infos_dict, runs_time_dict):
+    runs_freq = ""
+    for chave, valor in runs_time_dict.items():
+        aux = ("{0}: {1} / ".format(chave, valor))
+        runs_freq = runs_freq + aux
     workflow_json = {
-            "Workflow_Name":workflow_name, "State":workflow_state, "Created_at": temp_start, "Updated_at" :temp_close,
-            "Dev_time":diff_temp, "Success_rate":store_infos_dict["perc_sucess"], "Branch_Main_rate":store_infos_dict["perc_branch_main"], "Other_Branchs_rate":store_infos_dict["perc_branch_outros"],
+            "Workflow_Name":store_infos_dict["Workflow_Name"], "State":store_infos_dict["State"], "Created_at": store_infos_dict["Created_at"], "Updated_at" :store_infos_dict["Updated_at"],
+            "Dev_time":store_infos_dict["Dev_time"], "Success_rate":store_infos_dict["perc_sucess"], "Branch_Main_rate":store_infos_dict["perc_branch_main"], "Other_Branchs_rate":store_infos_dict["perc_branch_outros"],
             "Mean(Execution time)":store_infos_dict["runs_mean_time"], "Std_deviation(Execution time)": store_infos_dict["runs_sd_time"], "Jobs_mean":store_infos_dict["mean_jobs"], "Jobs_deviation": store_infos_dict["sd_jobs"], "Total_runs": store_infos_dict["n_runs"], 
             "Runs_Analyzed": store_infos_dict["n_runs_analyses"], "Mean Time Between runs":store_infos_dict["runs_mean_time_between_executions"], 
-            "Std_deviation Time Between runs": store_infos_dict["runs_sd_time_between_executions"]
+            "Std_deviation Time Between runs": store_infos_dict["runs_sd_time_between_executions"], "runs_freq" : runs_freq
         }
-    workflow_json = {**workflow_json, **runs_time_dict} # Junta com o dicionário que aprenseta a data de frequência da execução da runs
     return(workflow_json)
 
