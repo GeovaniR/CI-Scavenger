@@ -1,5 +1,4 @@
 ## Import libraries
-## Import libraries
 import sys, getopt
 import get_workflow_infos as work
 import calculate_stats as calc
