@@ -1,0 +1,2 @@
+;workflow_name;workflow_state;temp_start;temp_close;diff_temp;runs_mean_time;runs_sd_time;runs_mean_time_between_executions;runs_sd_time_between_executions;mean_jobs;sd_jobs;perc_sucess;perc_branch_main;perc_branch_outros;n_runs;n_runs_analyzed;runs_freq
+0;ci;active;2021-08-08T08:31:16.000-03:00;2021-08-13T09:27:30.000-03:00;5 days 0:56:14;0:01:38;0:00:13;16:25:18;1 day, 5:56:07;2.46;1.16;97.5 %;0.0 %;100.0 %;361;100;2022-04: 25.0 % / 2022-03: 48.0 % / 2022-02: 27.0 % / 

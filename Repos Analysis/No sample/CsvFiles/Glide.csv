@@ -1,0 +1,4 @@
+;workflow_name;workflow_state;temp_start;temp_close;diff_temp;runs_mean_time;runs_sd_time;runs_mean_time_between_executions;runs_sd_time_between_executions;mean_jobs;sd_jobs;perc_sucess;perc_branch_main;perc_branch_outros;n_runs;n_runs_analyzed;runs_freq
+0;Android CI;active;2020-11-23T22:11:17.000-03:00;2020-11-23T22:11:17.000-03:00;0:00:00;0:06:42;0:00:36;14:38:17;2 days, 2:00:52;0.99;0.1;77.78 %;0.0 %;100.0 %;787;100;2022-04: 1.0 % / 2022-03: 40.0 % / 2022-02: 59.0 % / 
+1;Validate Gradle Wrapper;active;2020-01-21T18:06:04.000-03:00;2020-01-21T18:06:04.000-03:00;0:00:00;0:00:20;0:00:04;14:38:17;2 days, 2:00:52;0.99;0.1;98.99 %;0.0 %;100.0 %;1389;100;2022-04: 1.0 % / 2022-03: 40.0 % / 2022-02: 59.0 % / 
+2;pages-build-deployment;active;2022-02-07T21:52:03.000-03:00;2022-02-07T21:52:03.000-03:00;0:00:00;0:01:10;-1;15 days, 22:25:32;-1;2;0.0;100.0 %;0.0 %;100.0 %;2;2;2022-02: 100.0 % / 
