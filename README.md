@@ -1,2 +1,5 @@
 # IC---Software-Analytcs
-Repositório de desenvolvimento de um algoritmo que recupera informações da API do git hub
+
+In this repository we present an approach to enhance the investigation regarding the level of adoption of CI/CD practices in software repositories hosted on GitHub. For that, we developed a tool to mine data related to the concrete structure of CI/CD pipelines and their executions, exploring the potential of the valuable data available in GitHub Actions.
+
+The Research is supported by CNPQ and Unicamp.
