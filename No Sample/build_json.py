@@ -21,7 +21,7 @@ def build_json_file(name_json, json_data):
         return(print("Arquivo json não está formatado corretamente")) 
 
 # Função que coloca os resultados da aplicação no formato dicionário para depois transformar em .json
-def json_transform(store_infos_dict, runs_time_dict):
+def format_file(store_infos_dict, runs_time_dict):
     runs_freq = ""
     for chave, valor in runs_time_dict.items():
         aux = ("{0}: {1} / ".format(chave, valor))

@@ -1,19 +1,6 @@
 from socket import if_indextoname
 import requests
-import random
 from log_requests import requests_dict_count
-
-# Recupera informações sobre o número de jobs através de uma amostra das runs do pipeline e adiciona numa lista
-def sample_jobs_runs(n, runs, n_jobs_list, username, token, full_repo_path): # Função que conta o número de jobs em cada run
-    tamanho_amostra = n//2 # Tamanho da amostra
-    if (tamanho_amostra%2 != 0):
-        tamanho_amostra += 1
-    bloco_1 = random.sample(range(tamanho_amostra), k= tamanho_amostra//2) # O primeiro bloco é uma amostra das runs mais recentes
-    bloco_2 = random.sample(range(tamanho_amostra, n), k= tamanho_amostra//2) # O segundo bloco é uma amostra das runs mais antigas
-    amostra = [*bloco_1, *bloco_2] # Junto os blocos pra formar a amostra
-    for i in amostra: 
-        count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
-    return (n_jobs_list)
 
 # Recupera informações sobre o número de jobs percorendo todas as runs
 def count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path): # Função que conta o número de jobs em cada run
