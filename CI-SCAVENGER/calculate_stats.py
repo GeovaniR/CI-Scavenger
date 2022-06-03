@@ -48,7 +48,7 @@ def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_out
     return(store_infos_dict)
 
 # Função principal que chama as secundárias para calcular as informações
-def calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, verbose): # n define quantos runs serão pegas
+def calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, verbose, sampling): # n define quantos runs serão pegas
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Recupera o número de runs no workflow e o texto json com as informações 
     n_runs_sucess, runs_sucess = run_sucess.runs_sucess_path(i, n, workflows, request_path, username, token) # Recupera o número de runs que foram sucesso entre as n últimas runs e o texto json com as informações
     store_infos_dict = {} # Lista para armazenar as estatísticas que vamos calcular
@@ -73,8 +73,8 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
                 sucess, private = run_sucess.count_runs_sucess(i, runs, sucess, private)
                 branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
                 runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
-                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n) 
-            jbs.sample_jobs_runs(n, runs, n_jobs_list, username, token, full_repo_path)
+                runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n)
+            jbs.sample_or_not(sampling, runs, n_jobs_list, username, token, full_repo_path, n)    
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n  # Armazena que o número de runs análisadas é igual ao solicitado pelo usuário
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, private, branch_main_ativation, runs_time_dict)

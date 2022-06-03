@@ -13,16 +13,17 @@ def main():
     owner = input("Repository Owner:") # Repo Owner
     repo = input("Repository Name:") # Repo name
     n = int(input("Runs amount:")) # Runs amount to analyze
-    verbose = int(input("Print informations (1 or 0):")) # Print informations (1 or 0)
+    verbose = int(input("Print informations(1 or 0):")) # Print informations (1 or 0)
     name = str(input("Output name:")) # Output name
-    output = str(input("Output format(csv ou json):")) # Output format
+    output = str(input("Output format(csv or json):")) # Output format
+    sampling = str(input("Sampling or Not:(y or n):")) # Sample or not
 
     repo_path, full_repo_path, request_path, workflows, n_pipelines = work.define_workflow_path(username, token, owner, repo, verbose)
     json_data = {repo_path:[]}
     for i in range(0, n_pipelines): ## Loop for each pipeline
         validate_worflow = pipeline.investigate_workflow_ci_cd(i, n, workflows, request_path, username, token, full_repo_path) # Validate CI/CD workflow
         if (validate_worflow): # If confirm CI/CD, Execute functions and calculate statistics
-            store_infos_dict, runs_time_dict = calc.calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, verbose)
+            store_infos_dict, runs_time_dict = calc.calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, verbose, sampling)
             if (store_infos_dict): # Verify if the workflow is not empty
                 store_infos_dict = work.workflow_name_state(i, workflows, verbose, store_infos_dict)
                 store_infos_dict = work.calculate_development_time(i, workflows, verbose, store_infos_dict)
