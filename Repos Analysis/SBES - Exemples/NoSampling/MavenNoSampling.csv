@@ -1,0 +1,3 @@
+;Workflow_Name;State;Created_at;Updated_at;Dev_time;Success_rate;Branch_Main_rate;Other_Branchs_rate;Mean(Execution time);Std_deviation(Execution time);Jobs_mean;Jobs_deviation;Total_runs;Runs_Analyzed;Mean Time Between runs;Std_deviation Time Between runs;runs_freq
+0;Java CI;active;2020-07-01;2020-07-01;0:00:00;77.78 %;0.0 %;100.0 %;0:21:59;0:08:40;11.08;2.66;2134;100;5:07:10;10:46:36;2022-06: 6.0 % / 2022-05: 94.0 % / 
+1;Can Maven build itself;active;2021-11-19;2021-12-13;23 days 22:17:17;89.9 %;0.0 %;100.0 %;0:10:23;0:08:24;3.96;0.4;451;100;11:24:54;19:50:01;2022-06: 3.0 % / 2022-05: 62.0 % / 2022-04: 35.0 % / 
