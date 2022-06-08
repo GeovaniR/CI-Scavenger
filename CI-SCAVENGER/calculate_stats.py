@@ -1,4 +1,3 @@
-import print_infos as prt
 import get_job_amount as jbs
 import get_runs_info as runsf
 import get_sucess_runs_info as run_sucess
@@ -48,7 +47,7 @@ def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_out
     return(store_infos_dict)
 
 # Função principal que chama as secundárias para calcular as informações
-def calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, verbose, sampling): # n define quantos runs serão pegas
+def calculate_workflows_stats(i, n, workflows, username, token, request_path, full_repo_path, sampling): # n define quantos runs serão pegas
     n_runs, runs = runsf.runs_path(i, n, workflows, request_path, username, token) # Recupera o número de runs no workflow e o texto json com as informações 
     n_runs_sucess, runs_sucess = run_sucess.runs_sucess_path(i, n, workflows, request_path, username, token) # Recupera o número de runs que foram sucesso entre as n últimas runs e o texto json com as informações
     store_infos_dict = {} # Lista para armazenar as estatísticas que vamos calcular
@@ -78,7 +77,6 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n  # Armazena que o número de runs análisadas é igual ao solicitado pelo usuário
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, private, branch_main_ativation, runs_time_dict)
-        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess)    
-        prt.print_information(verbose, store_infos_dict, runs_time_dict)        
+        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess)           
     return(store_infos_dict, runs_time_dict)
         
