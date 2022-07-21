@@ -1,3 +1,0 @@
-;workflow_name;workflow_state;temp_start;temp_close;diff_temp;runs_mean_time;runs_sd_time;runs_mean_time_between_executions;runs_sd_time_between_executions;mean_jobs;sd_jobs;perc_sucess;perc_branch_main;perc_branch_outros;n_runs;n_runs_analyzed;runs_freq
-0;CodeQL;active;2021-08-29T08:24:55.000-03:00;2021-08-29T08:24:55.000-03:00;0:00:00;0:02:00;0:03:13;1 day, 2:30:44;1 day, 7:20:55;1;0.0;100.0 %;26.0 %;74.0 %;237;100;2022-04: 7.0 % / 2022-03: 28.0 % / 2022-02: 24.0 % / 2022-01: 37.0 % / 2021-12: 4.0 % / 
-1;pages-build-deployment;active;2021-12-28T09:41:26.000-03:00;2021-12-28T09:41:26.000-03:00;0:00:00;0:00:55;0:00:05;7 days, 21:13:24;8 days, 14:45:54;2;0.0;88.89 %;100.0 %;0.0 %;9;9;2022-03: 22.22 % / 2022-02: 22.22 % / 2022-01: 44.44 % / 2021-12: 11.11 % / 

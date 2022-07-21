@@ -22,7 +22,7 @@ def calculate_perc(sucess, n_runs, private, branch_main_ativation, runs_time_dic
     return (perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict)
 
 # Função que armazena as informações/estatísticas calculadas em um dicíonário
-def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess):
+def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess, pipeline_structure):
     store_infos_dict["perc_sucess"] = "{0} %".format(round(perc_sucess, 2)) # Arredonda e transforma em string formatada
     store_infos_dict["perc_branch_main"] = "{0} %".format(round(perc_branch_main, 2)) # Arredonda e transforma em string formatada
     store_infos_dict["perc_branch_outros"] = "{0} %".format(round(perc_branch_outros, 2)) # Arredonda e transforma em string formatada
@@ -44,6 +44,7 @@ def stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_out
     store_infos_dict["mean_jobs"] = str(round(statistics.mean(n_jobs_list), 2)) # Calcula e transforma em string
     store_infos_dict["n_runs"] = n_runs
     store_infos_dict["n_runs_analyses"] = n_runs_analyses
+    store_infos_dict["pipeline_structure"] = pipeline_structure
     return(store_infos_dict)
 
 # Função principal que chama as secundárias para calcular as informações
@@ -64,6 +65,7 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
                 runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
                 runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n_runs) 
                 jbs.count_jobs_runs(i, runs, n_jobs_list, username, token, full_repo_path)
+            pipeline_structure = jbs.get_pipeline_structure(username, token, full_repo_path, runs)    
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n_runs, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n_runs  # Armazena que o número de runs análisadas é igual ao número total de runs disponível         
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n_runs, private, branch_main_ativation, runs_time_dict)     
@@ -73,10 +75,11 @@ def calculate_workflows_stats(i, n, workflows, username, token, request_path, fu
                 branch_main_ativation = count_branch_ativation(i, runs, branch_main_ativation)
                 runs_time_dict = runsf.calculate_runs_data_freq(runs, i, runs_time_dict)
                 runs_diff_time = runsf.calculate_time_between_runs_execution(runs, i, runs_diff_time, n)
-            jbs.sample_or_not(sampling, runs, n_jobs_list, username, token, full_repo_path, n)    
+            jbs.sample_or_not(sampling, runs, n_jobs_list, username, token, full_repo_path, n)
+            pipeline_structure = jbs.get_pipeline_structure(username, token, full_repo_path, runs)    
             runs_time_list = runsf.loop_to_calculate_n_runs_execution_time(n, n_runs_sucess, runs_sucess, runs_time_list)
             n_runs_analyses = n  # Armazena que o número de runs análisadas é igual ao solicitado pelo usuário
             perc_sucess, perc_branch_main, perc_branch_outros, runs_time_dict = calculate_perc(sucess, n, private, branch_main_ativation, runs_time_dict)
-        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess)           
+        store_infos_dict = stock_infos(store_infos_dict, perc_sucess, perc_branch_main, perc_branch_outros, runs_time_list, n_jobs_list, n_runs, n_runs_analyses, runs_diff_time, n_runs_sucess, pipeline_structure)           
     return(store_infos_dict, runs_time_dict)
         

@@ -1,0 +1,4 @@
+;Workflow_Name;State;Created_at;Updated_at;Dev_time;Success_rate;Main_Branch_rate;Other_Branchs_rate;Mean(Execution time);Std_deviation(Execution time);Jobs_mean;Jobs_deviation;Total_runs;Runs_Analyzed;Mean Time Between runs;Std_deviation Time Between runs;runs_freq;Pipeline_Structure
+0;CI;active;2020-12-30;2020-12-30;0:00:00;93.81 %;0.0 %;100.0 %;0:17:35;0:10:45;3;0.0;24315;100;0:56:42;1:57:53;2022-07: 100.0 % / ;test-dev (macos-latest) / test-dev (windows-latest) / test-dev (ubuntu-latest) / 
+1;Check if PR has label;active;2022-05-24;2022-05-25;22:42:25;83.51 %;0.0 %;100.0 %;0:01:08;0:01:18;1;0.0;855;100;1:43:18;4:24:16;2022-07: 100.0 % / ;test-label-applied / 
+2;E2E Website;disabled_manually;2021-12-09;2021-12-15;5 days 18:10:57;11.11 %;0.0 %;100.0 %;0:19:12;Sem runs suficientes;1.78;0.44;9;9;3:11:22;5:23:40;2021-12: 100.0 % / ;test / preview / 

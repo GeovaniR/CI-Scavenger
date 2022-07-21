@@ -19,26 +19,26 @@ def main(argv):
     sampling = None # To sample or not
     argv = sys.argv[1:]
     try:
-        opts, args = getopt.getopt(argv, "u:t:ow:r:n:j:out:samp")
+        opts, args = getopt.getopt(argv, "u:t:o:r:n:j:e:s:")
     except:
         print("Error")
     for opt, arg in opts:
         if opt in ['-u']:
-            username = arg
+            username = str(arg)
         elif opt in ['-t']:
-            token = arg
-        elif opt in ['-ow']:
-            owner = arg    
+            token = str(arg)
+        elif opt in ['-o']:
+            owner = str(arg)    
         elif opt in ['-r']:
-            repo = arg
+            repo = str(arg)
         elif opt in ['-n']:
             n = int(arg)
         elif opt in ['-j']:
-            name = arg
-        elif opt in ['-out']:
-            output = arg
-        elif opt in ['-samp']:
-            sampling = arg        
+            name = str(arg)
+        elif opt in ['-e']:
+            output = str(arg)
+        elif opt in ['-s']:
+            sampling = str(arg)        
     # Execução das funções
     repo_path, full_repo_path, request_path, workflows, n_pipelines = work.define_workflow_path(username, token, owner, repo)
     json_data = {repo_path:[]}

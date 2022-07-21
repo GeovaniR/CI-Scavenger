@@ -1,2 +1,2 @@
-;workflow_name;workflow_state;temp_start;temp_close;diff_temp;runs_mean_time;runs_sd_time;runs_mean_time_between_executions;runs_sd_time_between_executions;mean_jobs;sd_jobs;perc_sucess;perc_branch_main;perc_branch_outros;n_runs;n_runs_analyzed;runs_freq
-0;Validate Gradle Wrapper;active;2020-02-11T04:52:45.000-03:00;2020-02-11T04:52:45.000-03:00;0:00:00;0:00:21;0:00:04;1:33:06;3:50:15;0.95;0.22;100.0 %;37.0 %;63.0 %;8781;100;2022-04: 100.0 % / 
+;Workflow_Name;State;Created_at;Updated_at;Dev_time;Success_rate;Main_Branch_rate;Other_Branchs_rate;Mean(Execution time);Std_deviation(Execution time);Jobs_mean;Jobs_deviation;Total_runs;Runs_Analyzed;Mean Time Between runs;Std_deviation Time Between runs;runs_freq;Pipeline_Structure
+0;Validate Gradle Wrapper;active;11/02/2020;11/02/2020;00:00:00;100.0 %;53.0 %;47.0 %;00:00:23;00:00:05;1;0.0;9683;100;03:13:09;09:51:51;2022-07: 91.0 % / 2022-06: 9.0 % / ;Validation / 
